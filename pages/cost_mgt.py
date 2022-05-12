@@ -12,14 +12,14 @@ config.read("config.ini")
 
 
 def show(cn: db.connection, year_scope: int):
-    st.markdown("# Performance - All Years")
+    st.markdown("# Cost Management")
 
     cell_a1, cell_a2 = st.columns(2)
     with cell_a1:
-        revenue_vs_cost(cn, year_scope)
+        placeholder(cn, year_scope)
 
     with cell_a2:
-        annual_revenue_by_loc(cn, year_scope)
+        placeholder(cn, year_scope)
 
     cell_b1, cell_b2 = st.columns(2)
     with cell_b1:
