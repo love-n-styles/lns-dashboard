@@ -61,7 +61,8 @@ def annual_revenue_by_loc(cn: db.connection, year_scope: int):
                   2: "Amount"}, inplace=True)
         fig = px.line(df, x="Year", y="Amount", color="Location", hover_data=[
             "Amount"], labels={"Amount": "Amount (PHP)"})
-        # fig.update_layout(showlegend=True)
+        fig.update_xaxes(minor_griddash="dashdot", minor_gridcolor="#dddddd")
+        # fig.update_xaxes(autorange=False)
         st.plotly_chart(fig, use_container_width=True)
     st.write(cursor.rowcount, " rows returned")
 

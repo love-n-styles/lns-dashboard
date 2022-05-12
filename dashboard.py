@@ -1,7 +1,6 @@
 # import dependencies
 from datetime import datetime
 import streamlit as st
-import configparser as cp
 import mysql.connector as db
 
 # import pages
@@ -18,15 +17,12 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 
-config = cp.ConfigParser()
-config.read("config.ini")
-
 cn = db.connect(
-    host=config["db"]["db_host"],
-    port=config["db"]["db_port"],
+    host=st.secrets.db.db_host,
+    port=st.secrets.db.db_port,
     user=st.secrets.db.db_user,
     password=st.secrets.db.db_password,
-    database=config["db"]["db_schema"]
+    database=st.secrets.db.db_database,
 )
 
 CURRENT_YEAR = datetime.now().year
@@ -41,7 +37,7 @@ YEARS = {
 
 PAGES = {
     "Performance - Current Year": perf_cy,
-    "Performance - Previous Years": perf_py,
+    "Performance - All Years": perf_py,
     "Costs - Previous Years": cost_mgt,
     "Performance by Location": perf_py
 }
