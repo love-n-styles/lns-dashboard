@@ -126,7 +126,7 @@ def chart_monthly_revenue_vs_expenses(cn: db.connection, year_scope: int):
         df.rename(columns={0: "Month", 1: "Type",
                            2: "Amount"}, inplace=True)
         fig = px.line(df, x="Month", y="Amount", color="Type", hover_data=[
-            "Amount"], labels={"Amount": "Amount (PHP)"})
+            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
         fig = Config.set_chart_config(fig)
 
         st.plotly_chart(fig, use_container_width=True)
@@ -146,7 +146,7 @@ def chart_monthly_revenue_by_loc(cn: db.connection, year_scope: int):
         df.rename(columns={0: "Month", 1: "Location",
                            2: "Amount"}, inplace=True)
         fig = px.line(df, x="Month", y="Amount", color="Location", hover_data=[
-            "Amount"], labels={"Amount": "Amount (PHP)"})
+            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
         fig = Config.set_chart_config(fig)
 
         st.plotly_chart(fig, use_container_width=True)

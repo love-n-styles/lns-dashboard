@@ -41,10 +41,10 @@ def show(cn: db.connection):
 
     cell_b1, cell_b2 = st.columns(2)
     with cell_b1:
-        major_suppliers(cn)
+        major_suppliers_list(cn)
 
     with cell_b2:
-        Config.placeholder()
+        major_cogs_subtypes(cn)
 
 # Building blocks
 
@@ -66,7 +66,7 @@ def major_cost_by_catg(cn: db.connection):
         df.rename(columns={0: "Year", 1: "Category",
                   2: "Amount"}, inplace=True)
         fig = px.line(df, x="Year", y="Amount", color="Category", hover_data=[
-            "Amount"], labels={"Amount": "Amount (PHP)"})
+            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
         fig = Config.set_chart_config(fig)
         st.plotly_chart(fig, use_container_width=True)
     else:
@@ -90,14 +90,38 @@ def major_non_cogs_by_catg(cn: db.connection):
         df.rename(columns={0: "Year", 1: "Category",
                   2: "Amount"}, inplace=True)
         fig = px.line(df, x="Year", y="Amount", color="Category", hover_data=[
-            "Amount"], labels={"Amount": "Amount (PHP)"})
+            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
         fig = Config.set_chart_config(fig)
         st.plotly_chart(fig, use_container_width=True)
     else:
         Config.show_no_record_found()
 
 
-def major_suppliers(cn: db.connection):
+def major_cogs_subtypes(cn: db.connection):
+    st.markdown("## Major Suppliers")
+    cursor = cn.cursor()
+    if biz_line == "*":
+        query = config["sql"]["major-cogs-subtypes"]
+        cursor.execute(query)
+    else:
+        query = config["sql"]["major-cogs-subtypes-by-line"]
+        cursor.execute(query, (biz_line,))
+
+    rows = cursor.fetchall()
+    if cursor.rowcount > 0:
+        df = pd.DataFrame(rows)
+        cursor.close()
+        df.rename(columns={0: "Year", 1: "Type",
+                  2: "Amount"}, inplace=True)
+        fig = px.line(df, x="Year", y="Amount", color="Type", hover_data=[
+            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
+        fig = Config.set_chart_config(fig)
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        Config.show_no_record_found()
+
+
+def major_suppliers_list(cn: db.connection):
     st.markdown("## Major Suppliers")
     cursor = cn.cursor()
     if biz_line == "*":
@@ -112,6 +136,7 @@ def major_suppliers(cn: db.connection):
         df = pd.DataFrame(rows)
         cursor.close()
         df.rename(columns={0: "Supplier", 1: "Amount"}, inplace=True)
-        st.table(df)
+        s = df.style.format({"Amount": lambda x: '{:,}'.format(x)})
+        st.table(s)
     else:
         Config.show_no_record_found()
