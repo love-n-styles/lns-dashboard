@@ -25,7 +25,7 @@ def show(cn: db.connection, year_scope: int):
 
     cell_b1, cell_b2 = st.columns(2)
     with cell_b1:
-        chart_monthly_revenue_vs_cost(cn, year_scope)
+        chart_monthly_revenue_vs_expenses(cn, year_scope)
 
     with cell_b2:
         chart_monthly_revenue_by_loc(cn, year_scope)
@@ -84,8 +84,8 @@ def kpi_ytd_cogs(cn: db.connection, year_scope: int):
         """, unsafe_allow_html=True)
 
 
-def chart_monthly_revenue_vs_cost(cn: db.connection, year_scope: int):
-    st.markdown("## Monthly Income vs Cost Trend")
+def chart_monthly_revenue_vs_expenses(cn: db.connection, year_scope: int):
+    st.markdown("## Revenue vs Expenses")
     query = config["sql"]["ytd-revenue-vs-expense-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
@@ -97,13 +97,15 @@ def chart_monthly_revenue_vs_cost(cn: db.connection, year_scope: int):
                            2: "Amount"}, inplace=True)
         fig = px.line(df, x="Month", y="Amount", color="Type", hover_data=[
             "Amount"], labels={"Amount": "Amount (PHP)"})
-        # fig.update_layout(showlegend=True)
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="grey", dtick=1)
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="grey")
+
         st.plotly_chart(fig, use_container_width=True)
     st.write(cursor.rowcount, " rows returned")
 
 
 def chart_monthly_revenue_by_loc(cn: db.connection, year_scope: int):
-    st.markdown("## Monthly Revenue by Location")
+    st.markdown("## Revenue by Location")
     query = config["sql"]["ytd-revenue-loc-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
@@ -115,7 +117,9 @@ def chart_monthly_revenue_by_loc(cn: db.connection, year_scope: int):
                            2: "Amount"}, inplace=True)
         fig = px.line(df, x="Month", y="Amount", color="Location", hover_data=[
             "Amount"], labels={"Amount": "Amount (PHP)"})
-        # fig.update_layout(showlegend=True)
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="grey", dtick=1)
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="grey")
+
         st.plotly_chart(fig, use_container_width=True)
     st.write(cursor.rowcount, " rows returned")
 
