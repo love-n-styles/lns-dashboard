@@ -1,5 +1,5 @@
 # import dependencies
-from datetime import datetime
+from importlib_metadata import metadata
 import streamlit as st
 import mysql.connector as db
 
@@ -7,6 +7,7 @@ import mysql.connector as db
 from pages import perf_cy
 from pages import perf_py
 from pages import cost_mgt
+from pages import metadata
 
 st.set_page_config(
     # Can be "centered" or "wide". In the future also "dashboard", etc.
@@ -25,29 +26,17 @@ cn = db.connect(
     database=st.secrets.db.db_database,
 )
 
-CURRENT_YEAR = datetime.now().year
-PREVIOUS_YEAR = CURRENT_YEAR - 1
-
-YEARS = {
-    str(CURRENT_YEAR): CURRENT_YEAR,
-    str(PREVIOUS_YEAR): PREVIOUS_YEAR,
-    "2020": 2020,
-    "2019": 2019
-}
-
 PAGES = {
     "Performance - Current Year": perf_cy,
     "Performance - All Years": perf_py,
-    "Costs - Previous Years": cost_mgt,
-    "Performance by Location": perf_py
+    "Costs - All Years": cost_mgt,
+    "Performance by Location": perf_py,
+    "Data Readiness": metadata
 }
-
-st.sidebar.title('Current Year')
-year_scope = st.sidebar.selectbox("Select year:", list(YEARS.keys()))
 
 st.sidebar.title('Navigation')
 #page1 = st.sidebar.selectbox("Go to page:", list(PAGES.keys()))
 # page1.show()
-selection = st.sidebar.radio("Select a page:", list(PAGES.keys()))
-page = PAGES[selection]
-page.show(cn, int(year_scope))
+page_selection = st.sidebar.radio("Select a page:", list(PAGES.keys()))
+page = PAGES[page_selection]
+page.show(cn)
