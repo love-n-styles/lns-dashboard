@@ -1,0 +1,5 @@
+streamlit
+configparser
+mysql-connector-python
+pandas
+plotly
