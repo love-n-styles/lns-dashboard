@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 config = cp.ConfigParser()
-config.read("config.ini")
+config.read("sql.ini")
 
 # Layout
 
@@ -33,7 +33,7 @@ def show(cn: db.connection, year_scope: int):
 
 def revenue_vs_cost(cn: db.connection, year_scope: int):
     st.markdown("## Revenue vs Expenses")
-    query = config["SQL"]["revenue-vs-expense"]
+    query = config["sql"]["revenue-vs-expense"]
     cursor = cn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -50,7 +50,7 @@ def revenue_vs_cost(cn: db.connection, year_scope: int):
 
 def annual_revenue_by_loc(cn: db.connection, year_scope: int):
     st.markdown("## Revenue by Location")
-    query = config["SQL"]["annual-revenue-loc"]
+    query = config["sql"]["annual-revenue-loc"]
     cursor = cn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()

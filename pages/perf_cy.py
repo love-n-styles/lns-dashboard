@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 
 config = cp.ConfigParser()
-config.read("config.ini")
+config.read("sql.ini")
 
 # Layout
 
@@ -35,7 +35,7 @@ def show(cn: db.connection, year_scope: int):
 
 def kpi_ytd_revenue(cn: db.connection, year_scope: int):
     st.markdown("## YTD Revenue")
-    query = config["SQL"]["ytd-revenue-cy"]
+    query = config["sql"]["ytd-revenue-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
     row = cursor.fetchone()
@@ -67,7 +67,7 @@ def kpi_ytd_bookings(cn: db.connection, year_scope: int):
 
 def kpi_ytd_cogs(cn: db.connection, year_scope: int):
     st.markdown("## YTD COGS")
-    query = config["SQL"]["ytd-cogs-cy"]
+    query = config["sql"]["ytd-cogs-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
     row = cursor.fetchone()
@@ -86,7 +86,7 @@ def kpi_ytd_cogs(cn: db.connection, year_scope: int):
 
 def chart_monthly_revenue_vs_cost(cn: db.connection, year_scope: int):
     st.markdown("## Monthly Income vs Cost Trend")
-    query = config["SQL"]["ytd-revenue-vs-expense-cy"]
+    query = config["sql"]["ytd-revenue-vs-expense-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
     rows = cursor.fetchall()
@@ -104,7 +104,7 @@ def chart_monthly_revenue_vs_cost(cn: db.connection, year_scope: int):
 
 def chart_monthly_revenue_by_loc(cn: db.connection, year_scope: int):
     st.markdown("## Monthly Revenue by Location")
-    query = config["SQL"]["ytd-revenue-loc-cy"]
+    query = config["sql"]["ytd-revenue-loc-cy"]
     cursor = cn.cursor()
     cursor.execute(query, (year_scope,))
     rows = cursor.fetchall()
