@@ -28,17 +28,43 @@ def show():
 
     cell_a1, cell_a2, cell_a3 = st.columns(3)
     with cell_a1:
-        st.text("YTD Revenue")
+        st.markdown("## YTD Revenue")
+        number1 = 111
+        kpi = "{:,}".format(number1)
+        st.markdown(
+            f"""
+            <div style="border-radius: 25px; border: 2px solid #696969; padding: 20px;
+                width: 200px; height: 150px;">
+            <h1 style='text-align: center; color: #00b300;'>{kpi}</h1>
+            </div>
+            """, unsafe_allow_html=True)
 
     with cell_a2:
-        st.text("YTD Booking Taken")
+        st.markdown("## YTD Booking Taken")
+        number1 = 98888
+        kpi = "{:,}".format(number1)
+        st.markdown(
+            f"""
+            <div style="border-radius: 25px; border: 2px solid #696969; padding: 20px;
+                width: 200px; height: 150px;">
+            <h1 style='text-align: center; color: #00b300;'>{kpi}</h1>
+            </div>
+            """, unsafe_allow_html=True)
 
     with cell_a3:
-        st.text("YTD COGS")
+        st.markdown("## YTD COGS")
+        number1 = 12345
+        st.markdown(
+            f"""
+            <div style="border-radius: 25px; border: 2px solid #696969; padding: 20px;
+                width: 200px; height: 150px;">
+            <h1 style='text-align: center; color: #00b300;'>{number1}</h1>
+            </div>
+            """, unsafe_allow_html=True)
 
     cell_b1, cell_b2 = st.columns(2)
     with cell_b1:
-        st.text("Monthly Income vs Cost Trend")
+        st.markdown("## Monthly Income vs Cost Trend")
         cursor = cn.cursor()
         query = config["SQL"]["income-cy"]
         current_year = 2020
@@ -50,4 +76,4 @@ def show():
         st.plotly_chart(fig)
 
     with cell_b2:
-        st.text("Monthly Revenue by Location")
+        st.markdown("## Monthly Revenue by Location")

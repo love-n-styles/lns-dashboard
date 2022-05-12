@@ -1,12 +1,20 @@
+# import dependencies
+from datetime import datetime
 import streamlit as st
-import configparser as cp
-import mysql.connector as db
-import pandas as pd
+#import configparser as cp
+#import mysql.connector as db
+#import pandas as pd
 #import numpy as np
-import plotly.express as px
+#import plotly.express as px
 #from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+#import plotly.graph_objects as go
 # import matplotlib.pyplot as plt
+
+# import pages
+from pages import perf_cy
+from pages import perf_py
+#from pages.perf_cy import app as perf_cy
+#from pages.perf_py import app as perf_py
 
 st.set_page_config(
     # Can be "centered" or "wide". In the future also "dashboard", etc.
@@ -17,43 +25,27 @@ st.set_page_config(
     page_icon=None,  # String, anything supported by st.image, or None.
 )
 
-st.title('Performance Dashboard')
+CURRENT_YEAR = datetime.now().year
+PREVIOUS_YEAR = CURRENT_YEAR - 1
 
-config = cp.ConfigParser()
-config.read("config.ini")
-db_host = config["DB"]["host"]
-db_port = config["DB"]["port"]
-db_schema = config["DB"]["schema"]
-db_user = config["DB"]["user"]
-db_pass = config["DB"]["pass"]
+YEARS = {
+    str(CURRENT_YEAR): CURRENT_YEAR,
+    str(PREVIOUS_YEAR): PREVIOUS_YEAR
+}
 
-cn = db.connect(
-    host=config["DB"]["host"],
-    user=config["DB"]["user"],
-    password=config["DB"]["pass"]
-)
+PAGES = {
+    "Performance - Current Year": perf_cy,
+    "Performance - Previous Years": perf_py,
+    "Costs - Previous Years": perf_py,
+    "Performance by Location": perf_py
+}
 
-with cn.cursor() as cur:
-    cur.execute(
-        "select trans_type, biz_line from lns_finance.journal_view_1 LIMIT 10")
-    rows = cur.fetchall()
+st.sidebar.title('Current Year')
+year_scope = st.sidebar.selectbox("Select year:", list(YEARS.keys()))
 
-cell_a1, cell_a2 = st.columns(2)
-with cell_a1:
-    st.text('Dashboard of Company ABC')
-    # Print results.
-    for row in rows:
-        st.write(f"{row[0]} has a {row[1]}")
-
-with cell_a2:
-    st.text("Table")  # time.strftime("%Y-%m-%d %H:%M")
-
-cell_b1, cell_b2 = st.columns(2)
-with cell_b1:
-    st.text('Dashboard of Company ABC')
-
-with cell_b2:
-    st.text("Table")  # time.strftime("%Y-%m-%d %H:%M")
-    # Print results.
-    for row in rows:
-        st.write(f"{row[0]} has a {row[1]}")
+st.sidebar.title('Navigation')
+#page1 = st.sidebar.selectbox("Go to page:", list(PAGES.keys()))
+# page1.show()
+selection = st.sidebar.radio("Select a page:", list(PAGES.keys()))
+page = PAGES[selection]
+page.show()
