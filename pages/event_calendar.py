@@ -1,6 +1,6 @@
 from ast import Str
 import string
-from turtle import onclick
+#from turtle import onclick
 import streamlit as st
 import mysql.connector as db
 import pandas as pd
