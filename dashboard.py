@@ -7,6 +7,8 @@ import mysql.connector as db
 from pages import perf_cy
 from pages import perf_py
 from pages import cost_mgt
+from pages import perf_loc
+from pages import event_calendar
 from pages import metadata
 
 st.set_page_config(
@@ -30,7 +32,8 @@ PAGES = {
     "Performance - Current Year": perf_cy,
     "Performance - All Years": perf_py,
     "Costs - All Years": cost_mgt,
-    "Performance by Location": perf_py,
+    "Performance by Location": perf_loc,
+    "Event Calendar": event_calendar,
     "Data Readiness": metadata
 }
 

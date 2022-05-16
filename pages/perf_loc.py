@@ -13,14 +13,14 @@ config.read("sql.ini")
 
 
 def show(cn: db.connection):
-    st.markdown("# Performance - All Years")
+    st.markdown("# Performance by Locations")
 
     cell_a1, cell_a2 = st.columns(2)
     with cell_a1:
-        revenue_vs_cost(cn)
+        Config.placeholder()
 
     with cell_a2:
-        annual_revenue_by_loc(cn)
+        Config.placeholder()
 
     cell_b1, cell_b2 = st.columns(2)
     with cell_b1:

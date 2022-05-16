@@ -59,7 +59,7 @@ def show(cn: db.connection):
 
 
 def major_cost_by_catg(cn: db.connection):
-    st.markdown("## Major Cost Categories")
+    st.markdown("### Major Cost Categories")
     cursor = cn.cursor()
     if biz_line == "*":
         query = config["sql"]["major-cost-catg"]
@@ -83,7 +83,7 @@ def major_cost_by_catg(cn: db.connection):
 
 
 def major_non_cogs_by_catg(cn: db.connection):
-    st.markdown("## Non-COGS Categories")
+    st.markdown("### Non-COGS Categories")
     cursor = cn.cursor()
     if biz_line == "*":
         query = config["sql"]["major-non-cogs-catg"]
@@ -107,7 +107,7 @@ def major_non_cogs_by_catg(cn: db.connection):
 
 
 def major_cogs_subtypes(cn: db.connection):
-    st.markdown("## Cost Categories")
+    st.markdown("### Cost Categories")
     cursor = cn.cursor()
     if biz_line == "*":
         query = config["sql"]["major-cogs-subtypes"]
@@ -131,7 +131,7 @@ def major_cogs_subtypes(cn: db.connection):
 
 
 def major_suppliers_list(cn: db.connection):
-    st.markdown("## Major Suppliers")
+    st.markdown("### Major Suppliers")
     cursor = cn.cursor()
     if biz_line == "*":
         query = config["sql"]["major-suppliers-total"]
@@ -145,14 +145,14 @@ def major_suppliers_list(cn: db.connection):
         df = pd.DataFrame(rows)
         cursor.close()
         df.rename(columns={0: "Supplier", 1: "Amount"}, inplace=True)
-        s = df.style.format({"Amount": lambda x: '{:,}'.format(x)})
+        s = df.style.format({"Amount": lambda x: "{:,}".format(x)})
         st.table(s)
     else:
         Config.show_no_record_found()
 
 
 def major_suppliers_by_month(cn: db.connection):
-    st.markdown("## Purchase by Month")
+    st.markdown("### Purchase by Month")
     cursor = cn.cursor()
 
     query = config["sql"]["major-supplier-list"]
