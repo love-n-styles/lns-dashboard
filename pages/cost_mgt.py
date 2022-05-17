@@ -155,8 +155,12 @@ def major_suppliers_by_month(cn: db.connection):
     st.markdown("### Purchase by Month")
     cursor = cn.cursor()
 
-    query = config["sql"]["major-supplier-list"]
-    cursor.execute(query, (TOP_SUPPLIER_LIMIT,))
+    if biz_line == "*":
+        query = config["sql"]["major-supplier-list"]
+        cursor.execute(query, (TOP_SUPPLIER_LIMIT,))
+    else:
+        query = config["sql"]["major-supplier-list-by-line"]
+        cursor.execute(query, (biz_line, TOP_SUPPLIER_LIMIT))
     suppliers = cursor.fetchall()
     supplier = st.selectbox(
         "Select a supplier:", pd.DataFrame(suppliers))

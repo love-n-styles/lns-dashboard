@@ -9,10 +9,20 @@ class Config:
         return dict(l=10, r=10, t=45, b=0)
 
     @classmethod
-    def set_chart_config(self, fig: px.line):
+    def set_chart_config(self, fig: px.line, *args, **kwargs):
+        xtick = kwargs.get('xtick', 1)
+        ytick = kwargs.get('ytick', 0)
         fig.update_layout(margin=Config.default_chart_margins())
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="grey", dtick=1)
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="grey")
+        if xtick == 0:
+            fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="grey")
+        else:
+            fig.update_xaxes(showgrid=True, gridwidth=1,
+                             gridcolor="grey", dtick=xtick)
+        if ytick == 0:
+            fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="grey")
+        else:
+            fig.update_yaxes(showgrid=True, gridwidth=1,
+                             gridcolor="grey", dtick=ytick)
         return fig
 
     @classmethod

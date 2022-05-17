@@ -57,6 +57,7 @@ def show(cn: db.connection):
 
     with cell_c2:
         chart_future_revenue(cn, year_scope)
+        # Config.placeholder("Test")
 
 # Building blocks
 
@@ -188,8 +189,8 @@ def chart_booking_by_loc(cn: db.connection, year_scope: int):
                            2: "Event"}, inplace=True)
         fig = px.line(df, x="Month", y="Event", color="Location", hover_data=[
             "Event"], labels={"Event": "No. of Events"}, markers=True)
-        fig = Config.set_chart_config(fig)
-        fig.update_yaxes(dtick=1)
+        fig = Config.set_chart_config(fig, ytick=1)
+        # fig.update_yaxes(dtick=1)
         st.plotly_chart(fig, use_container_width=True)
     else:
         Config.show_no_record_found()
@@ -197,21 +198,21 @@ def chart_booking_by_loc(cn: db.connection, year_scope: int):
 
 def chart_future_revenue(cn: db.connection, year_scope: int):
     st.markdown("### Upcoming Revenue")
-    query = config["sql"]["future-revenue"]
+    query = config["sql"]["future-revenue-monthly"]
     cursor = cn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     if cursor.rowcount > 0:
         df = pd.DataFrame(rows)
         cursor.close()
-        df.rename(columns={0: "Month", 1: "Location",
-                           2: "Amount"}, inplace=True)
+        df.rename(columns={0: "Month", 1: "Amount"}, inplace=True)
         # s = df.style.format({"Month": lambda x: "{%b-%Y}".format(x)})
         # df['Month'] = pd.to_datetime(df["Month"], format="%b-%Y", utc=True)
-        # df["Month"] = pd.to_datetime(df["Month"].dt.strftime("%b-%Y"))
-        fig = px.line(df, x="Month", y="Amount", color="Location", hover_data=[
-            "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
-        fig = Config.set_chart_config(fig)
+        #df["Month"] = pd.to_datetime(df["Month"].dt.strftime("%b-%Y"))
+        #df.style.format({"Month": lambda t: t.strftime("%m-%Y")})
+        fig = px.line(df, x="Month", y="Amount", hover_data=[
+                      "Amount"], labels={"Amount": "Amount (PHP)"}, markers=True)
+        fig = Config.set_chart_config(fig, xtick=0)
         st.plotly_chart(fig, use_container_width=True)
     else:
         Config.show_no_record_found()

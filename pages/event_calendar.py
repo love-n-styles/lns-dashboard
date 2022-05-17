@@ -1,7 +1,6 @@
-from ast import Str
-import string
-#from turtle import onclick
 import streamlit as st
+import configparser as cp
+#from turtle import onclick
 import mysql.connector as db
 import pandas as pd
 from datetime import datetime
@@ -9,21 +8,19 @@ from config import Config
 
 query_year = datetime.now().year
 query_month = datetime.now().month
-# months_in_year = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_in_year = ['Jan', 'Feb', 'Mar', 'Apr', 'May',
                   'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+config = cp.ConfigParser()
+config.read("sql.ini")
 
 
 def show(cn: db.connection):
     st.markdown("# Event Calendar")
 
     cursor = cn.cursor()
-    query = """select event_date, left(dayname(event_date),3) as event_weekday,
-        trans_biz_loc, staff_alias, receipt_number, coordinator_name, client_names
-        from client_booking a left join staff b on a.staff_id = b.staff_id
-        where is_final = 0 and year(event_date) = %s and month(event_date) = %s
-        order by event_date
-        """
+    query = config["sql"]["event-list"]
+
     with st.container():
         showPrevNextButton("1")
 
@@ -32,9 +29,10 @@ def show(cn: db.connection):
         if cursor.rowcount > 0:
             df = pd.DataFrame(rows)
             cursor.close()
-            df.rename(columns={0: "Date", 1: "Day", 2: "Location", 3: "Staff",
-                      4: "Receipt#", 5: "Coordinator", 6: "Clients"}, inplace=True)
-            st.table(df.astype(str))
+            df.rename(columns={0: "Day", 1: "Location", 2: "Staff",
+                      3: "Receipt#", 4: "Coordinator", 5: "Clients"}, inplace=True)
+            #df.style.format({"Date": lambda t: t.strftime("%d %b")})
+            st.table(df)
 
             showPrevNextButton("2")
         else:
@@ -59,7 +57,7 @@ def gotoNextMonth():
         query_year = query_year + 1
 
 
-def showPrevNextButton(id: Str):
+def showPrevNextButton(id: str):
     key1 = "prev_month" + id
     key2 = "Next_month" + id
 
