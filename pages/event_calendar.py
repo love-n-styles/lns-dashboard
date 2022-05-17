@@ -1,6 +1,5 @@
 import streamlit as st
 import configparser as cp
-#from turtle import onclick
 import mysql.connector as db
 import pandas as pd
 from datetime import datetime

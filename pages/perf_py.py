@@ -3,7 +3,6 @@ import configparser as cp
 import mysql.connector as db
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from config import Config
 
 config = cp.ConfigParser()

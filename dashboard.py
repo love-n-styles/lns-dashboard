@@ -1,5 +1,4 @@
 # import dependencies
-from importlib_metadata import metadata
 import streamlit as st
 import mysql.connector as db
 
