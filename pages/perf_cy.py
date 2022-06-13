@@ -189,7 +189,7 @@ def chart_booking_by_loc(cn: db.connection, year_scope: int):
                            2: "Event"}, inplace=True)
         fig = px.line(df, x="Month", y="Event", color="Location", hover_data=[
             "Event"], labels={"Event": "No. of Events"}, markers=True)
-        fig = Config.set_chart_config(fig, ytick=1)
+        fig = Config.set_chart_config(fig)
         # fig.update_yaxes(dtick=1)
         st.plotly_chart(fig, use_container_width=True)
     else:
