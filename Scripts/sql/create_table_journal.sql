@@ -1,0 +1,22 @@
+CREATE TABLE `journal` (
+  `journal_id` int NOT NULL AUTO_INCREMENT,
+  `is_actual` tinyint(1) DEFAULT '1',
+  `trans_ref` varchar(20) DEFAULT NULL,
+  `trans_date` date DEFAULT NULL,
+  `biz_line` varchar(15) DEFAULT NULL,
+  `trans_type` varchar(12) DEFAULT NULL,
+  `trans_subtype1` varchar(45) DEFAULT NULL,
+  `trans_subtype2` varchar(255) DEFAULT NULL,
+  `tags` varchar(200) DEFAULT NULL,
+  `counterparty` varchar(45) DEFAULT NULL,
+  `trans_loc` varchar(5) DEFAULT 'PH',
+  `trans_amount_php` decimal(12,2) DEFAULT NULL,
+  `batch_ref` varchar(20) NOT NULL,
+  `trans_amount_orig` decimal(12,2) DEFAULT NULL,
+  `exchange_rate` decimal(12,6) DEFAULT '1.000000',
+  `currency_code` char(3) DEFAULT 'PHP',
+  `trans_biz_loc` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`journal_id`),
+  KEY `idx_batch_ref` (`batch_ref`),
+  KEY `FK_biz_loc_idx` (`trans_biz_loc`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

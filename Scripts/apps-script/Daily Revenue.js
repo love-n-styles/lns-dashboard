@@ -1,4 +1,4 @@
-// Timestamp: 2022-06-13 20:54:00
+// Timestamp: 2022-06-14 02:19:00
 // for testing: import_test
 // for production: journal
 const JOURNAL_TABLE = "journal";
@@ -15,13 +15,13 @@ const NULL_DATE = 91;
 const TRANS_BIZ_LOC = 0;
 const TRANS_STAFF_ID = 1;
 const TRANS_STAFF_ALIAS = 2;
-const TRANS_RECEIPT_ID = 4;
-const TRANS_COORDINATOR_NAME = 5;
-const TRANS_CLIENT_NAMES = 6;
-const TRANS_EVENT_DATE = 7;
-const TRANS_RECEIPT_AMOUNT = 8;
-const TRANS_SALE_AMOUNT = 9;
-const TRANS_RENTAL_AMOUNT = 10;
+const TRANS_RECEIPT_ID = 5;
+const TRANS_COORDINATOR_NAME = 6;
+const TRANS_CLIENT_NAMES = 7;
+const TRANS_EVENT_DATE = 8;
+const TRANS_RECEIPT_AMOUNT = 9;
+const TRANS_SALE_AMOUNT = 10;
+const TRANS_RENTAL_AMOUNT = 11;
 const SUMMARY_BIZ_LOC = 0;
 const SUMMARY_TRANS_TYPE = 1;
 const SUMMARY_TRANS_SUBTYPE1 = 2;
@@ -35,8 +35,8 @@ const RECEIPT_LAST_AMEND_DATE = 5;
 const RECEIPT_UNPAID_BALANCE = 6;
 
 const STATUS_CELL = "E1";
-const CHECKED_TICKBOX = "L6";
-const UPLOADED_TICKBOX = "L7"
+const CHECKED_TICKBOX = "M6";
+const UPLOADED_TICKBOX = "M7"
 const RE_UPLOAD_ERR_MSG = "Cannot upload more than once!"
 
 const URL = "jdbc:mysql://s1-db.ddns.net:3306/s1";
