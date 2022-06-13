@@ -42,8 +42,8 @@ function postDailyRevenue2DB() {
   // set Batch Reference according to the date in the spreadsheet
   var transDate = SpreadsheetApp.getActiveSpreadsheet().getRangeByName("TransDate");
   dateValue = transDate.getValue();
-  batchDate = Utilities.formatDate(dateValue, Session.getScriptTimeZone(),"yyyy-MM-dd");
-  batchRef = Utilities.formatDate(dateValue, Session.getScriptTimeZone(),"yyyyMMdd") + "-0";
+  batchDate = Utilities.formatDate(dateValue, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  batchRef = Utilities.formatDate(dateValue, Session.getScriptTimeZone(), "yyyyMMdd") + "-0";
 
   // remove transactions previously posted from posting log and journal
   conn = Jdbc.getConnection(URL, "horace", "Luv!270211");
@@ -64,7 +64,7 @@ function postDailyRevenue2DB() {
   postTrans();
   postSummary();
 
-  conn.close(); 
+  conn.close();
 }
 
 function postTrans() {
@@ -99,12 +99,12 @@ function postTrans() {
   for (var row in values) {
     if (is_header) {
       is_header = false;
-    } 
+    }
     else {
       paymentAmount = 0;
       if (values[row][TRANS_BIZ_LOC] != "") {
         if (values[row][TRANS_EVENT_DATE] != "") {
-          eventDate = Utilities.formatDate(values[row][TRANS_EVENT_DATE], Session.getScriptTimeZone(),"yyyy-MM-dd");
+          eventDate = Utilities.formatDate(values[row][TRANS_EVENT_DATE], Session.getScriptTimeZone(), "yyyy-MM-dd");
         }
         stmtTrans.setString(1, batchRef);
         stmtTrans.setObject(2, batchDate);
@@ -133,9 +133,9 @@ function postTrans() {
           stmtJournal.setString(1, BIZ_LINE);
           stmtJournal.setString(2, batchRef);
           stmtJournal.setObject(3, batchDate);
-          stmtJournal.setString(4,"Income");
-          stmtJournal.setString(5,"Rental");
-          stmtJournal.setString(6,"Rental");
+          stmtJournal.setString(4, "Income");
+          stmtJournal.setString(5, "Rental");
+          stmtJournal.setString(6, "Rental");
           stmtJournal.setString(7, values[row][TRANS_BIZ_LOC]);
           if (values[row][TRANS_RECEIPT_ID] == "") { stmtJournal.setNull(8, NULL_VARCHAR) }
           else { stmtJournal.setString(8, values[row][TRANS_RECEIPT_ID]) }
@@ -148,9 +148,9 @@ function postTrans() {
           stmtJournal.setString(1, BIZ_LINE);
           stmtJournal.setString(2, batchRef);
           stmtJournal.setObject(3, batchDate);
-          stmtJournal.setString(4,"Income");
-          stmtJournal.setString(5,"Retail Sale");
-          stmtJournal.setString(6,"Retail Sale");
+          stmtJournal.setString(4, "Income");
+          stmtJournal.setString(5, "Retail Sale");
+          stmtJournal.setString(6, "Retail Sale");
           stmtJournal.setString(7, values[row][TRANS_BIZ_LOC]);
           if (values[row][TRANS_RECEIPT_ID] == "") { stmtJournal.setNull(8, NULL_VARCHAR) }
           else { stmtJournal.setString(8, values[row][TRANS_RECEIPT_ID]) }
@@ -174,17 +174,20 @@ function postTrans() {
                 if (values[row][TRANS_COORDINATOR_NAME] != receiptDetails.getString(RECEIPT_COORDINATOR_NAME)) {
                   stmtUpdateReceipt.executeUpdate("update client_receipt set coordinator_name = '"
                     + values[row][TRANS_COORDINATOR_NAME] + "'" + whereClause);
-              }}
+                }
+              }
               if (values[row][TRANS_CLIENT_NAMES] != "") {
                 if (values[row][TRANS_CLIENT_NAMES] != receiptDetails.getString(RECEIPT_CLIENT_NAMES)) {
                   stmtUpdateReceipt.executeUpdate("update client_receipt set client_names = '"
                     + values[row][TRANS_CLIENT_NAMES] + "'" + whereClause);
-              }}
+                }
+              }
               if (values[row][TRANS_EVENT_DATE] != "") {
                 if (values[row][TRANS_EVENT_DATE] != receiptDetails.getString(RECEIPT_EVENT_DATE)) {
                   stmtUpdateReceipt.executeUpdate("update client_receipt set event_date = '"
                     + eventDate + "'" + whereClause);
-              }}
+                }
+              }
               lastReceiptAmount = Number(receiptDetails.getString(RECEIPT_PACKAGE_AMOUNT));
               newPaymentBalance = Number(receiptDetails.getString(RECEIPT_UNPAID_BALANCE)) - paymentAmount;
               if (values[row][TRANS_RECEIPT_AMOUNT] == "") {
@@ -205,39 +208,38 @@ function postTrans() {
                   stmtUpdateReceipt.executeUpdate("update client_receipt set receipt_amount_php = "
                     + values[row][TRANS_RECEIPT_AMOUNT] + ", unpaid_balance_php = "
                     + newPaymentBalance + whereClause);
-              }}
+                }
+              }
               stmtUpdateReceipt.executeUpdate("update client_receipt set last_amend_date = '"
-                + batchDate + "', updated_on = CURRENT_TIMESTAMP, updated_by = 999"  + whereClause);
+                + batchDate + "', updated_on = CURRENT_TIMESTAMP, updated_by = 999" + whereClause);
               conn.commit();
               conn.setAutoCommit(true);
               stmtUpdateReceipt.close();
             }
           }
           else {
-            if (values[row][TRANS_EVENT_DATE] != "" || values[row][TRANS_COORDINATOR_NAME] != "") {
-              stmtInsertReceipt = conn.prepareStatement("INSERT INTO client_receipt "
-                + "(receipt_number, staff_id, trans_biz_loc, coordinator_name, client_names, event_date, "
-                + "receipt_amount_php, last_amend_date, unpaid_balance_php, trans_date, created_by) VALUES(?,?,?,?,?,?,?,?,?,?,999)");
-              stmtInsertReceipt.setString(1, values[row][TRANS_RECEIPT_ID]);
-              stmtInsertReceipt.setString(2, values[row][TRANS_STAFF_ID]);
-              stmtInsertReceipt.setString(3, values[row][TRANS_BIZ_LOC]);
-              if (values[row][TRANS_COORDINATOR_NAME] == "") { stmtInsertReceipt.setNull(4, NULL_VARCHAR) }
-                else { stmtInsertReceipt.setString(4, values[row][TRANS_COORDINATOR_NAME]) }
-              if (values[row][TRANS_CLIENT_NAMES] == "") { stmtInsertReceipt.setNull(5, NULL_VARCHAR) }
-                else { stmtInsertReceipt.setString(5, values[row][TRANS_CLIENT_NAMES]) }
-              if (values[row][TRANS_EVENT_DATE] == "") { stmtInsertReceipt.setNull(6, NULL_DATE) }
-                else { stmtInsertReceipt.setObject(6, eventDate) }
-              if (values[row][TRANS_RECEIPT_AMOUNT] == "") { stmtInsertReceipt.setDouble(7, 0) }
-                else { stmtInsertReceipt.setDouble(7, values[row][TRANS_RECEIPT_AMOUNT]) }
-              stmtInsertReceipt.setString(8, batchDate);
-              transBalance = values[row][TRANS_RECEIPT_AMOUNT] - paymentAmount;
-              if (transBalance < 0) { stmtInsertReceipt.setDouble(9, 0) }
-                else { stmtInsertReceipt.setDouble(9, transBalance) }
-              stmtInsertReceipt.setString(10, batchDate);
-              stmtInsertReceipt.addBatch();
-              stmtInsertReceipt.executeBatch();
-              stmtInsertReceipt.close();
-            }
+            stmtInsertReceipt = conn.prepareStatement("INSERT INTO client_receipt "
+              + "(receipt_number, staff_id, trans_biz_loc, coordinator_name, client_names, event_date, "
+              + "receipt_amount_php, last_amend_date, unpaid_balance_php, trans_date, created_by) VALUES(?,?,?,?,?,?,?,?,?,?,999)");
+            stmtInsertReceipt.setString(1, values[row][TRANS_RECEIPT_ID]);
+            stmtInsertReceipt.setString(2, values[row][TRANS_STAFF_ID]);
+            stmtInsertReceipt.setString(3, values[row][TRANS_BIZ_LOC]);
+            if (values[row][TRANS_COORDINATOR_NAME] == "") { stmtInsertReceipt.setNull(4, NULL_VARCHAR) }
+            else { stmtInsertReceipt.setString(4, values[row][TRANS_COORDINATOR_NAME]) }
+            if (values[row][TRANS_CLIENT_NAMES] == "") { stmtInsertReceipt.setNull(5, NULL_VARCHAR) }
+            else { stmtInsertReceipt.setString(5, values[row][TRANS_CLIENT_NAMES]) }
+            if (values[row][TRANS_EVENT_DATE] == "") { stmtInsertReceipt.setNull(6, NULL_DATE) }
+            else { stmtInsertReceipt.setObject(6, eventDate) }
+            if (values[row][TRANS_RECEIPT_AMOUNT] == "") { stmtInsertReceipt.setDouble(7, 0) }
+            else { stmtInsertReceipt.setDouble(7, values[row][TRANS_RECEIPT_AMOUNT]) }
+            stmtInsertReceipt.setString(8, batchDate);
+            transBalance = values[row][TRANS_RECEIPT_AMOUNT] - paymentAmount;
+            if (transBalance < 0) { stmtInsertReceipt.setDouble(9, 0) }
+            else { stmtInsertReceipt.setDouble(9, transBalance) }
+            stmtInsertReceipt.setString(10, batchDate);
+            stmtInsertReceipt.addBatch();
+            stmtInsertReceipt.executeBatch();
+            stmtInsertReceipt.close();
           }
           stmtReadReceipt.close();
         }
@@ -275,7 +277,7 @@ function postSummary() {
   for (var row in values) {
     if (is_header) {
       is_header = false;
-    } 
+    }
     else {
       if ((values[row][SUMMARY_DAY_TOTAL] * 1) != 0) {
         stmtSummary.setString(1, batchRef);
@@ -323,7 +325,7 @@ function staff_name(id) {
   if (id) {
     var cn = Jdbc.getConnection(URL, "horace", "Luv!270211");
     var stmt = cn.createStatement();
-    var rs = stmt.executeQuery("select staff_alias from staff where staff_id = " + id +";")
+    var rs = stmt.executeQuery("select staff_alias from staff where staff_id = " + id + ";")
     if (rs.next()) {
       return rs.getString(1);
     } else {
@@ -338,12 +340,12 @@ function receipt_exists(key) {
   } else {
     var cn = Jdbc.getConnection(URL, "horace", "Luv!270211");
     var stmt = cn.createStatement();
-    var rs = stmt.executeQuery("select * from client_receipt where receipt_number = '" + key.trim() +"';")
+    var rs = stmt.executeQuery("select * from client_receipt where receipt_number = '" + key.trim() + "';")
     if (rs.next()) {
       return "Y";
     } else {
       return "N";
-    }    
+    }
   }
 }
 
@@ -357,7 +359,7 @@ function query_receipt(key) {
     var stmt = cn.createStatement();
     var rs = stmt.executeQuery("select trans_biz_loc, staff_id, coordinator_name, client_names, " +
       "event_date, receipt_amount_php, unpaid_balance_php, is_final from client_receipt " +
-      "where receipt_number = '" + key.trim() +"';");
+      "where receipt_number = '" + key.trim() + "';");
     if (rs.next()) {
       paid_amount = 1 * rs.getDouble(6) - rs.getDouble(7)
       return rs.getString(1) + "\n" +
@@ -371,12 +373,12 @@ function query_receipt(key) {
         rs.getDouble(7);
     } else {
       return "*Not found*";
-    }    
+    }
   }
 }
 
 function test1() {
-  var a =1;
+  var a = 1;
   Logger.log(test2(a));
   Logger.log(a);
 }
