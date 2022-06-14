@@ -1,8 +1,10 @@
-// Timestamp: 2022-06-14 02:19:00
+// Timestamp: 2022-06-14 18:00:00
 // for testing: import_test
 // for production: journal
 const JOURNAL_TABLE = "journal";
 const BIZ_LINE = "Bridal";
+const DB_USER = "horace"
+const DB_PASS = "Luv!270211"
 
 const NULL_NUMERIC = 2;
 const NULL_INT = 4;
@@ -59,7 +61,7 @@ function postDailyRevenue2DB() {
     go_upload = false
   } else {
     SpreadsheetApp.getActiveSheet().getRange(STATUS_CELL).setValue("Checking database...");
-    var conn0 = Jdbc.getConnection(URL, "horace", "Luv!270211");
+    var conn0 = Jdbc.getConnection(URL, DB_USER, DB_PASS);
     var stmtBackupExists = "SELECT table_name FROM INFORMATION_SCHEMA.TABLES WHERE table_name = '" + backup_tbl_name + "';"
     var stmt = conn0.createStatement();
     var rs = stmt.executeQuery(stmtBackupExists)
@@ -75,16 +77,13 @@ function postDailyRevenue2DB() {
     batchDate = Utilities.formatDate(dateValue, Session.getScriptTimeZone(),"yyyy-MM-dd");
     batchRef = backup_tbl_name_suffix + "-0";
 
-    // const drawings = SpreadsheetApp.getActiveSheet().getDrawings();
-    //const drawing = drawings.filter((e) => e.getOnAction() == mainFunctionName);
-    // if (drawing.length == 1) {
     script_running = 1
     SpreadsheetApp.getActiveSheet().getRange(STATUS_CELL).setValue("Uploading...");
     SpreadsheetApp.flush();
 
     // remove transactions previously posted from posting log and journal
     // also back client_receipt table for recovery after a corrupted process
-    conn = Jdbc.getConnection(URL, "horace", "Luv!270211");
+    conn = Jdbc.getConnection(URL, DB_USER, DB_PASS);
     var stmtCleanUp = conn.prepareStatement("delete from import_daily_trans where batch_ref = ?");
     stmtCleanUp.setString(1, batchRef);
     stmtCleanUp.execute();
@@ -110,7 +109,6 @@ function postDailyRevenue2DB() {
     SpreadsheetApp.getActiveSheet().getRange(STATUS_CELL).setValue("");
     SpreadsheetApp.getActiveSheet().getRange(UPLOADED_TICKBOX).setValue("TRUE");
     script_running = 0
-    //}
   }
 }
 
@@ -128,7 +126,7 @@ function postTrans() {
 
   // read "Trans" table into array
   var trans = SpreadsheetApp.getActiveSpreadsheet().getRangeByName("Trans");
-  values = trans.getValues();
+  var values = trans.getValues();
 
   var rowJournal = 0;
   var rowTrans = 0;
@@ -141,7 +139,6 @@ function postTrans() {
     + " (batch_ref, trans_date, biz_loc, staff_id, receipt_number, coordinator_name, "
     + "client_names, event_date, receipt_amount, sale_amount, rental_amount) "
     + "values(?,?,?,?,?,?,?,?,?,?,?);");
-  var stmtReadReceipt;
 
   for (var row in values) {
     if (is_header) {
@@ -213,7 +210,6 @@ function postTrans() {
             + "event_date, receipt_amount_php, last_amend_date, unpaid_balance_php "
             + "from client_receipt" + whereClause);
           if (receiptDetails.next()) {
-            // Logger.log(receiptDetails.getString(RECEIPT_LAST_AMEND_DATE));
             if (receiptDetails.getString(RECEIPT_LAST_AMEND_DATE) <= batchDate) {
               conn.setAutoCommit(false);
               stmtUpdateReceipt = conn.createStatement();
@@ -305,7 +301,7 @@ function postSummary() {
   var transFullType;
   // read "Summary" table into array
   var summary = SpreadsheetApp.getActiveSpreadsheet().getRangeByName("Summary");
-  values = summary.getValues();
+  var values = summary.getValues();
 
   var rowJournal = 0;
   var rowSummary = 0;
@@ -367,7 +363,7 @@ function postSummary() {
 
 function staff_name(id) {
   if (id) {
-    var cn = Jdbc.getConnection(URL, "horace", "Luv!270211");
+    var cn = Jdbc.getConnection(URL, DB_USER, DB_PASS);
     var stmt = cn.createStatement();
     var rs = stmt.executeQuery("select staff_alias from staff where staff_id = " + id +";")
     if (rs.next()) {
@@ -382,7 +378,7 @@ function receipt_exists(key) {
   if (key == "") {
     return "";
   } else {
-    var cn = Jdbc.getConnection(URL, "horace", "Luv!270211");
+    var cn = Jdbc.getConnection(URL, DB_USER, DB_PASS);
     var stmt = cn.createStatement();
     var rs = stmt.executeQuery("select * from client_receipt where receipt_number = '" + key.trim() +"';")
     if (rs.next()) {
@@ -399,7 +395,7 @@ function query_receipt(key) {
   if (key == "") {
     return "";
   } else {
-    var cn = Jdbc.getConnection(URL, "horace", "Luv!270211");
+    var cn = Jdbc.getConnection(URL, DB_USER, DB_PASS);
     var stmt = cn.createStatement();
     var rs = stmt.executeQuery("select trans_biz_loc, staff_id, coordinator_name, client_names, " +
       "event_date, receipt_amount_php, unpaid_balance_php, is_final, trans_date from client_receipt " +
@@ -422,21 +418,10 @@ function query_receipt(key) {
   }
 }
 
-function test1() {
-  var a =1;
-  Logger.log(test2(a));
-  Logger.log(a);
-}
-
-function test2(b) {
-  b = 2;
-  return 3;
-}
-
 function test3() {
-  conn = Jdbc.getConnection(URL, "horace", "");
+  conn = Jdbc.getConnection(URL, DB_USER, DB_PASS);
   var stmtReadReceipt = conn.createStatement();
-  receiptDetails = stmtReadReceipt.executeQuery("select coordinator_name, client_names, "
+  var receiptDetails = stmtReadReceipt.executeQuery("select coordinator_name, client_names, "
     + "event_date, receipt_amount_php, last_amend_date, unpaid_balance_php "
     + "from client_receipt");
   if (receiptDetails.next()) {
