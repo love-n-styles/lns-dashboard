@@ -33,4 +33,5 @@ SELECT
 `created_by`,
 `updated_on`,
 `updated_by`
-FROM client_receipt_20220508 ;
+FROM client_receipt_20220525;
+RENAME TABLE client_receipt_20220525 TO client_receipt_20220525_1;
