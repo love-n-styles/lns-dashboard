@@ -6,7 +6,7 @@ class Config:
 
     @classmethod
     def default_chart_margins(self):
-        return dict(l=40, r=10, t=45, b=30)
+        return dict(l=60, r=10, t=45, b=30)
 
     @classmethod
     def set_chart_config(self, fig: px.line, *args, **kwargs):
